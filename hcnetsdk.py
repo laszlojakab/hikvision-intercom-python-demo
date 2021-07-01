@@ -1,11 +1,15 @@
 import platform
 import sys
 import os.path
-from ctypes import cdll, CFUNCTYPE, Structure, POINTER, c_ushort, c_ulong, c_long, c_bool, c_char, c_byte, c_char_p, c_void_p, Union
-from ctypes.wintypes import WORD, DWORD, LONG, BYTE, CHAR, SHORT
+from ctypes import cdll, CFUNCTYPE, Structure, POINTER, c_ushort, c_ulong, c_long, c_bool, c_char, c_byte, c_char_p, c_void_p, c_short, Union
 
 BOOL = c_bool
-char = CHAR
+WORD = c_ushort
+DWORD = c_ulong
+LONG = c_long
+BYTE = c_byte
+SHORT = c_short
+char = c_char
 
 SERIALNO_LEN = 48
 NAME_LEN = 32
@@ -131,7 +135,7 @@ VIDEO_INTERCOM_ALARM_ALARMTYPE_DOOR_NOT_OPEN = 5
 VIDEO_INTERCOM_ALARM_ALARMTYPE_DOOR_NOT_CLOSED = 6
 VIDEO_INTERCOM_ALARM_ALARMTYPE_PANIC_ALARM = 7
 VIDEO_INTERCOM_ALARM_ALARMTYPE_INTERCOM_ALARM = 8
-VIDEO_INTERCOM_ALARM_ALARMTYPE_SMART_LOCK_DURESS_ALARM_FINGERPRINT = 9
+VIDEO_INTERCOM_ALARM_ALARMTYPE_SMART_LOCK_DURESS_ALARM_FINGERPRINT=  9
 VIDEO_INTERCOM_ALARM_ALARMTYPE_SMART_LOCK_DURESS_ALARM_PASSWORD = 10
 VIDEO_INTERCOM_ALARM_ALARMTYPE_SMART_LOCK_TAMPERING_ALARM = 11
 VIDEO_INTERCOM_ALARM_ALARMTYPE_SMART_LOCK_LOCK_UP_ALARM = 12
@@ -153,7 +157,7 @@ current_path = os.path.abspath(os.path.dirname(__file__))
 if platform.uname()[0] == "Windows":
     hcnetsdk_path = "d:\\Private\\Development\\EN-HCNetSDKV6.1.6.45_build20210302_win64\\lib\\HCNetSDK.dll"
 if platform.uname()[0] == "Linux":
-    hcnetsdk_path = os.path.join(current_path, "libhcnetsdk.so")
+    hcnetsdk_path = os.path.join(current_path, "lib/libhcnetsdk.so")
 
 HCNetSDK = cdll.LoadLibrary(hcnetsdk_path)
 
@@ -238,7 +242,6 @@ class NET_DVR_ALARMER(Structure):
         ("byRes2", BYTE * 6)
     ]
 
-
 class NET_DVR_DEVICEINFO_V30(Structure):
     _fields_ = [
         ("sSerialNumber", BYTE),
@@ -274,6 +277,20 @@ class NET_DVR_DEVICEINFO_V30(Structure):
     ]
 
 
+class NET_DVR_DEVICEINFO_V40(Structure):
+    _fields_ = [
+        ("struDeviceV30", NET_DVR_DEVICEINFO_V30),
+        ("bySupportLock", BYTE),
+        ("byRetryLoginTime", BYTE),
+        ("byPasswordLevel", BYTE),
+        ("byProxyType", BYTE),
+        ("dwSurplusLockTime", DWORD),
+        ("byCharEncodeType", BYTE),
+        ("bySupportDev5", BYTE),
+        ("byLoginMode", BYTE),
+        ("byRes2", BYTE * 253)
+    ]
+
 class NET_DVR_SETUPALARM_PARAM(Structure):
     _fields_ = [
         ("dwSize", DWORD),
@@ -292,6 +309,24 @@ class NET_DVR_SETUPALARM_PARAM(Structure):
         ("byCustomCtrl", BYTE)
     ]
 
+class NET_DVR_SETUPALARM_PARAM_V50(Structure):
+    _fields_ = [
+        ("dwSize", DWORD),
+        ("byLevel", BYTE),
+        ("byAlarmInfoType", BYTE),
+        ("byRetAlarmTypeV40", BYTE),
+        ("byRetDevInfoVersion", BYTE),
+        ("byRetVQDAlarmType", BYTE),
+        ("byFaceAlarmDetection", BYTE),
+        ("bySupport", BYTE),
+        ("byBrokenNetHttp", BYTE),
+        ("wTaskNo", WORD),
+        ("byDeployType", BYTE),
+        ("byRes1", BYTE * 3),
+        ("byAlarmTypeURL", BYTE),
+        ("byCustomCtrl", BYTE),
+        ("byRes4", BYTE * 128),
+    ]
 
 class NET_DVR_DEVICEINFO_V40(Structure):
     _fields_ = [
@@ -308,6 +343,7 @@ class NET_DVR_DEVICEINFO_V40(Structure):
     ]
 
 
+
 class NET_DVR_ALARMINFO_V30(Structure):
     _fields_ = [
         ("dwAlarmType", DWORD),
@@ -317,8 +353,7 @@ class NET_DVR_ALARMINFO_V30(Structure):
         ("byChannel", BYTE * MAX_CHANNUM_V30),
         ("byDiskNumber", BYTE * MAX_DISKNUM_V30)
     ]
-
-
+    
 class NET_DVR_TIME_EX(Structure):
     _fields_ = [
         ("wYear", WORD),
@@ -330,13 +365,11 @@ class NET_DVR_TIME_EX(Structure):
         ("byRes", BYTE)
     ]
 
-
 class NET_DVR_VIDEO_INTERCOM_ALARM_INFO_UNION(Structure):
     _fields_ = [
         ("byLen", BYTE * 256)
     ]
-
-
+    
 class NET_DVR_VIDEO_INTERCOM_ALARM(Structure):
     _fields_ = [
         ("dwSize", DWORD),
@@ -348,8 +381,7 @@ class NET_DVR_VIDEO_INTERCOM_ALARM(Structure):
         ("wLockID", BYTE),
         ("byRes2", BYTE)
     ]
-
-
+    
 class NET_DVR_UNLOCK_RECORD_INFO(Structure):
     _fields_ = [
         ("byUnlockType", BYTE),
@@ -365,22 +397,19 @@ class NET_DVR_UNLOCK_RECORD_INFO(Structure):
         ("byLockName", BYTE * LOCK_NAME_LEN),
         ("byRes", BYTE * 168),
     ]
-
-
+    
 class NET_DVR_NOTICEDATA_RECEIPT_INFO(Structure):
     _fields_ = [
         ("byNoticeNumber", BYTE * MAX_NOTICE_NUMBER_LEN),
         ("byRes", BYTE * 224)
     ]
-
-
+    
 class NET_DVR_SEND_CARD_INFO(Structure):
     _fields_ = [
         ("byCardNo", BYTE * ACS_CARD_NO_LEN),
         ("byRes", BYTE * 224)
     ]
-
-
+        
 class NET_DVR_AUTH_INFO(Structure):
     _fields_ = [
         ("byAuthResult", BYTE),
@@ -391,8 +420,7 @@ class NET_DVR_AUTH_INFO(Structure):
         ("pImage", POINTER(BYTE)),
         ("byRes", BYTE * 212),
     ]
-
-
+    
 class NET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON(Union):
     _fields_ = [
         ("byLen", BYTE),
@@ -401,27 +429,24 @@ class NET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON(Union):
         ("struAuthInfo", NET_DVR_AUTH_INFO),
         ("struSendCardInfo", NET_DVR_SEND_CARD_INFO),
     ]
-
-
+    
 class NET_DVR_VIDEO_INTERCOM_EVENT(Structure):
     _fields_ = [
         ("dwSize", DWORD),
         ("struTime", NET_DVR_TIME_EX),
         ("byDevNumber", BYTE * MAX_DEV_NUMBER_LEN),
-        ("byEventType", BYTE),
+        ("byEventType", BYTE),      
         ("byRes1", BYTE * 3),
         ("uEventInfo", NET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON),
         ("byRes2", BYTE * 256),
     ]
-
-
+    
 class MessageCallbackAlarmInfoUnion(Union):
     _fields_ = [
         ("NET_DVR_ALARMINFO_V30", NET_DVR_ALARMINFO_V30),
         ("NET_DVR_VIDEO_INTERCOM_ALARM", NET_DVR_VIDEO_INTERCOM_ALARM),
         ("NET_DVR_VIDEO_INTERCOM_EVENT", NET_DVR_VIDEO_INTERCOM_EVENT)
     ]
-
 
 fMessageCallBack = CFUNCTYPE(BOOL, LONG, POINTER(
     NET_DVR_ALARMER), POINTER(MessageCallbackAlarmInfoUnion), DWORD, c_void_p)
