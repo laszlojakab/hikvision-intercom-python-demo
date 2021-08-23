@@ -5,7 +5,7 @@ from ctypes import cdll, CFUNCTYPE, Structure, POINTER, c_ushort, c_ulong, c_lon
 
 BOOL = c_bool
 WORD = c_ushort
-DWORD = c_ulong
+DWORD = c_ulong if sizeof(c_ulong) == 4 else c_uint
 LONG = c_long
 BYTE = c_byte
 SHORT = c_short
