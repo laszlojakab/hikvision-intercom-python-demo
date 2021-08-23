@@ -1,7 +1,7 @@
 import platform
 import sys
 import os.path
-from ctypes import cdll, CFUNCTYPE, Structure, POINTER, c_ushort, c_ulong, c_long, c_bool, c_char, c_byte, c_char_p, c_void_p, c_short, Union
+from ctypes import cdll, CFUNCTYPE, Structure, POINTER, c_ushort, c_ulong, c_long, c_bool, c_char, c_byte, c_char_p, c_void_p, c_short, Union, sizeof, c_uint
 
 BOOL = c_bool
 WORD = c_ushort
