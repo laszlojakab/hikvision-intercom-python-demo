@@ -1,3 +1,4 @@
+import platform
 from hcnetsdk import HCNetSDK, NET_DVR_DEVICEINFO_V30, NET_DVR_DEVICEINFO_V30, NET_DVR_CONTROL_GATEWAY
 from ctypes import c_byte, sizeof, byref
 
@@ -7,7 +8,18 @@ HCNetSDK.NET_DVR_SetValidIP(0, True)
 
 device_info = NET_DVR_DEVICEINFO_V30()
 
-user_id = HCNetSDK.NET_DVR_Login_V30( "192.168.0.1".encode('utf-8'), 8000, "admin".encode('utf-8'), "pass12345".encode('utf-8'), device_info)
+address = "192.168.0.1".encode('utf-8')
+user = "admin".encode('utf-8')
+password = "pass12345".encode('utf-8')
+
+if platform.uname()[0] == "Windows":
+    user_id = HCNetSDK.NET_DVR_Login_V30(
+        address, 8000, user, password, device_info)
+if platform.uname()[0] == "Linux":
+    # suppressing passing device_info on Linux as it is causing crashing
+    # (see https://github.com/laszlojakab/hikvision-intercom-python-demo/issues/2)
+    user_id = HCNetSDK.NET_DVR_Login_V30(
+        address, 8000, user, password)
 
 if (user_id < 0):
     print(
